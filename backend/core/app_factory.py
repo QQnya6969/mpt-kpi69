@@ -4,7 +4,7 @@ from flask import Flask
 from flask_cors import CORS
 from flask_restful import Api
 
-from auth import auth_bp
+
 from config import Config
 from extensions import db, login_manager, mail, migrate
 from resources.basic_resource import BasicResource
@@ -13,6 +13,8 @@ from resources.criteries_resource import CriteriesResource
 from resources.employees_resource import EmployeesResource
 from resources.pdf_resource import PDFResource
 from routes import bp as main_bp
+from api.v1.users import users_bp
+from api.auth.handlers import  auth_bp
 
 
 def create_app():
@@ -51,6 +53,7 @@ def create_app():
 
     # Register blueprints
     app.register_blueprint(main_bp)
-    app.register_blueprint(auth_bp)
+    app.register_blueprint(users_bp, url_prefix='/api/v1/users')
+    app.register_blueprint(auth_bp, url_prefix='/api/auth')
 
     return app

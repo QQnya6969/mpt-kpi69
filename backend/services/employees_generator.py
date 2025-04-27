@@ -1,29 +1,45 @@
-import requests
 import collections
 import random
 
-
 Employee = collections.namedtuple('Employee', 'id first_name last_name surname job_id phone email'.split())
 
-first_names_url = 'https://raw.githubusercontent.com/Raven-SL/ru-pnames-list/refs/heads/master/lists/male_names_rus.txt'
-last_names_url = 'https://raw.githubusercontent.com/Raven-SL/ru-pnames-list/refs/heads/master/lists/male_surnames_rus.txt'
-
-first_names = requests.get(first_names_url).content.decode('utf-8').split('\n')
-last_names = requests.get(last_names_url).content.decode('utf-8').split('\n')
-surnames = [f'{name}ович' for name in first_names]
-job_ids = ['Библиотекарь']
-phones = ['+7(963)650-42-93']
-emails = ['pochta@mail.ru']
-
-
-def _generate_random_employee(id):
-    return Employee(
-        id=id,
-        first_name=random.choice(first_names),
-        last_name=random.choice(last_names),
-        surname=random.choice(surnames),
-        job_id=random.choice(job_ids),
-        phone=random.choice(phones),
-        email=random.choice(emails),
+# Мок-данные для разработки
+employees_list = [
+    Employee(
+        id=1,
+        first_name="Иван",
+        last_name="Иванов",
+        surname="Иванович",
+        job_id=1,
+        phone="+79990001122",
+        email="ivan@example.com"
+    ),
+    Employee(
+        id=2,
+        first_name="Петр",
+        last_name="Петров",
+        surname="Петрович",
+        job_id=1,
+        phone="+79990003344",
+        email="petr@example.com"
     )
-employees_list: list[Employee] = [_generate_random_employee(i) for i in range(100)] # Override this to use database requests
+]
+
+def get_employees():
+    """Возвращает список всех сотрудников"""
+    return employees_list
+
+def add_employee(employee_data):
+    """Добавляет нового сотрудника в список"""
+    new_id = max(e.id for e in employees_list) + 1 if employees_list else 1
+    employee = Employee(
+        id=new_id,
+        first_name=employee_data['first_name'],
+        last_name=employee_data['last_name'],
+        surname=employee_data.get('surname', ''),
+        job_id=employee_data.get('job_id', 1),
+        phone=employee_data.get('phone', ''),
+        email=employee_data['email']
+    )
+    employees_list.append(employee)
+    return employee
